@@ -26,8 +26,9 @@ print(f"Buttons: {controller.get_numbuttons()}, Axis: {controller.get_numaxes()}
 
 for port in serial.tools.list_ports.comports():
     try:
-        ser = serial.Serial(port.device, BAUD, timeout=1)
+        SER = serial.Serial(port.device, BAUD, timeout=1)
         PORT = port.device
+        time.sleep(2)
         print(f"Connected to {port.device}, {port.manufacturer} - {port.product}")
     except Exception as e:
         print(f"coulnt not connect to {port.device}, {port.manufacturer} - {port.product}: {e}")
@@ -39,9 +40,9 @@ if not PORT:
     exit()
 
 def send_command(motor_index, speed):
-    if ser and ser.is_open:
+    if SER and SER.is_open:
         command = f"{motor_index},{int(speed * MOTOR_SPEED)}\n"
-        ser.write(command.encode())
+        SER.write(command.encode())
 try:
     while True:
         for event in pygame.event.get():
@@ -65,10 +66,12 @@ try:
         lt = controller.get_axis(2)
         rt = (controller.get_axis(5) + 1) / 2
 
-        send_command(1, rt)
-        time.sleep(1)
+        send_command(1, max(min(rt - lh, 1), 0))
+        send_command(3, max(min(rt + lh, 1), 0))
+
+        time.sleep(0.05)
 
 finally:
-    if ser and ser.is_open:
-        ser.close()
+    if SER and SER.is_open:
+        SER.close()
     pygame.quit()
