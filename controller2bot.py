@@ -40,6 +40,7 @@ if not PORT:
     exit()
 
 def send_command(motor_index, speed):
+    speed = max(min(speed, 1), 0)
     if SER and SER.is_open:
         command = f"{motor_index},{int(speed * MOTOR_SPEED)}\n"
         SER.write(command.encode())
@@ -66,13 +67,28 @@ try:
         lt = (controller.get_axis(4) + 1) / 2
         rt = (controller.get_axis(5) + 1) / 2
 
-        send_command(1, max(min(rt - rh, 1), -1))
-        send_command(3, max(min(rt + rh, 1), -1))
+        # Up and Down
 
-        # send_command(0, max(min(lv, 1), -1))
-        send_command(2, max(min(lv, 1), -1))
+        send_command(2, lv)
+        send_command(6, lv)
+
+        send_command(5, -lv)
+        send_command(9, -lv)
+
+        # Forward and back and turning
+        # Right Motor
+        send_command(4, rt - lt)
+        send_command(3, lt - rt)
+        # Left Motor
+        send_command(8, rt - lt)
+        send_command(7, lt - rt)
+
 
         time.sleep(0.05)
+
+except:
+    # do nothing
+    pass
 
 finally:
     if SER and SER.is_open:
@@ -82,3 +98,5 @@ finally:
         send_command(3, 0)
         SER.close()
     pygame.quit()
+
+    print("\nProgram exited correctly")
