@@ -75,22 +75,19 @@ try:
 
         # Up and Down
 
-        send_command(2, lv)
-        send_command(6, lv)
+        send_command(2, rt)
+        send_command(6, rt)
 
-        send_command(5, -lv)
-        send_command(9, -lv)
+        send_command(5, lt)
+        send_command(9, lt)
 
         # Forward and back and turning
         # Right Motor
-        right_motor = (rt - lt) - rh
-        left_motor = (rt - lt) + rh
-
-        send_command(4, right_motor)
-        send_command(3, -right_motor)
+        send_command(4, rv)
+        send_command(3, -rv)
         # Left Motor
-        send_command(8, left_motor)
-        send_command(7, -left_motor)
+        send_command(8, lv)
+        send_command(7, -lv)
 
 
         time.sleep(0.05)
